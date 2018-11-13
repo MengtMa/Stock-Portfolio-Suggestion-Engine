@@ -15,6 +15,12 @@
                 alert('You can select maximum ' + maxAllowed + ' investment strategies!!');
             }
         });
+        $("form").submit(function(){
+        		if ($('input:checkbox').filter(':checked').length < 1){
+                alert("Please select at least one investment strategy!");
+        		    return false;
+        		}
+            });
     });
     </script>
   </head>
