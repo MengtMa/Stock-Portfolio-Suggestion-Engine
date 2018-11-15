@@ -27,5 +27,38 @@ def getEachAmount(amount, portion, stockList):
     amountList = {}
     for stock in stockList:
         p = portion[stock]
-        amountList[stock] = amount * p    
+        amountList[stock] = amount * p
     return amountList
+
+def getShareAmount(stockList, amountList, valueList):
+    shareAmount = {}
+    for stock in stockList:
+        amount = amountList[stock]
+        value = valueList[stock]
+        shareAmount[stock] = amount / value
+    return shareAmount
+
+def getWeekHistoryValue(stock):
+    weekHistory = {}
+    today = datetime.date.today()
+    fiveDayAgo = today - datetime.timedelta(days=6)
+    stockData = web.DataReader(stock, 'yahoo', fiveDayAgo, today)
+    stockDict = dict(stockData['Close'])
+
+    for key in stockDict:
+        date = key.strftime('%Y-%m-%d')
+        weekHistory[date] = stockDict[key]
+
+    return weekHistory
+
+def getHistoryPortfolio(stockList, shareAmount):
+    historyPortfolio = {}
+    for stock in stockList:
+        stockWeekHistory = getWeekHistoryValue(stock)
+        for key in stockWeekHistory:
+            if key in historyPortfolio:
+                historyPortfolio[key] += float(str(round(stockWeekHistory[key] * shareAmount[stock], 2)))
+            else:
+                historyPortfolio[key] = float(str(round(stockWeekHistory[key] * shareAmount[stock], 2)))
+
+    return historyPortfolio

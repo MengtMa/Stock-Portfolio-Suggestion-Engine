@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from app.portfolio import getCurrentValue, getCompanyName, getEachAmount
+from app.portfolio import getCurrentValue, getCompanyName, getEachAmount, getShareAmount, getHistoryPortfolio
 app = Flask(__name__)
 
 @app.route("/")
@@ -16,7 +16,9 @@ def getResult():
         valueList = getCurrentValue(stockList)
         nameList = getCompanyName(stockList)
         amountList = getEachAmount(float(amount), portion, stockList)
-        return render_template('result.html', stockList=stockList, valueList=valueList, nameList=nameList, amountList=amountList)
+        shareAmount = getShareAmount(stockList, amountList, valueList)
+        historyPortfolio = getHistoryPortfolio(stockList, shareAmount)
+        return render_template('result.html', stockList=stockList, valueList=valueList, nameList=nameList, amountList=amountList, historyPortfolio=historyPortfolio)
 
 if __name__ == '__main__':
     app.run(debug = True)
