@@ -4,38 +4,36 @@ import datetime as datetime
 import pandas_datareader.data as web
 import requests
 
-def getCurrentValue(stockList):
+def getCurrentValue(portion):
     valueList = {}
     today = datetime.date.today()
-    for stock in stockList:
-        stockData = web.DataReader(stock, 'yahoo', today, today)
+    for key in portion:
+        stockData = web.DataReader(key, 'yahoo', today, today)
         value = stockData['Adj Close'][0]
-        valueList[stock] = float(str(round(value, 2)))
+        valueList[key] = float(str(round(value, 2)))
     return valueList
 
-def getCompanyName(stockList):
+def getCompanyName(portion):
     nameList = {}
-    for symbol in stockList:
-        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(symbol)
+    for key in portion:
+        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(key)
         result = requests.get(url).json()
         for x in result['ResultSet']['Result']:
-            if x['symbol'] == symbol:
-                nameList[symbol] = x['name']
+            if x['symbol'] == key:
+                nameList[key] = x['name']
     return nameList
 
-def getEachAmount(amount, portion, stockList):
+def getEachAmount(amount, portion):
     amountList = {}
-    for stock in stockList:
-        p = portion[stock]
-        amountList[stock] = amount * p
+    for key, val in portion.items():
+        amountList[key] = amount * val
     return amountList
 
-def getShareAmount(stockList, amountList, valueList):
+def getShareAmount(amountList, valueList):
     shareAmount = {}
-    for stock in stockList:
-        amount = amountList[stock]
-        value = valueList[stock]
-        shareAmount[stock] = amount / value
+    for key,val in amountList.items():
+        value = valueList[key]
+        shareAmount[key] = val / value
     return shareAmount
 
 def getWeekHistoryValue(stock):
@@ -51,8 +49,9 @@ def getWeekHistoryValue(stock):
 
     return weekHistory
 
-def getHistoryPortfolio(stockList, shareAmount):
+def getHistoryPortfolio(shareAmount):
     historyPortfolio = {}
+    stockList = shareAmount.keys()
     for stock in stockList:
         stockWeekHistory = getWeekHistoryValue(stock)
         for key in stockWeekHistory:

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from app.portfolio import getCurrentValue, getCompanyName, getEachAmount, getShareAmount, getHistoryPortfolio
+from app.strategySelect import getPortionList
 app = Flask(__name__)
 
 @app.route("/")
@@ -11,14 +12,13 @@ def getResult():
     if request.method == 'POST':
         amount = request.form.get('amount', None)
         strategy = request.form.getlist("strategy")
-        stockList = ['ADBE', 'AAPL', 'MSFT', 'TSLA', 'NSRGY']
-        portion = {'ADBE': 0.3, 'AAPL': 0.2, 'MSFT':0.2, 'TSLA': 0.1, 'NSRGY': 0.2}
-        valueList = getCurrentValue(stockList)
-        nameList = getCompanyName(stockList)
-        amountList = getEachAmount(float(amount), portion, stockList)
-        shareAmount = getShareAmount(stockList, amountList, valueList)
-        historyPortfolio = getHistoryPortfolio(stockList, shareAmount)
-        return render_template('result.html', stockList=stockList, valueList=valueList, nameList=nameList, amountList=amountList, historyPortfolio=historyPortfolio)
+        portion = getPortionList(strategy)
+        valueList = getCurrentValue(portion)
+        nameList = getCompanyName(portion)
+        amountList = getEachAmount(float(amount), portion)
+        shareAmount = getShareAmount(amountList, valueList)
+        historyPortfolio = getHistoryPortfolio(shareAmount)
+        return render_template('result.html', valueList=valueList, nameList=nameList, amountList=amountList, historyPortfolio=historyPortfolio)
 
 if __name__ == '__main__':
     app.run(debug = True)

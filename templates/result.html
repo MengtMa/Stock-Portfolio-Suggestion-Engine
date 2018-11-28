@@ -76,12 +76,12 @@
       </tr>
     </thead>
     <tbody>
-      {% for stock in stockList %}
+      {% for key in nameList %}
       <tr>
-        <td>{{stock}}</td>
-        <td>{{nameList[stock]}}</td>
-        <td>{{valueList[stock]}}</td>
-        <td>{{amountList[stock]}}</td>
+        <td>{{key}}</td>
+        <td>{{nameList[key]}}</td>
+        <td>{{valueList[key]}}</td>
+        <td>{{amountList[key]}}</td>
       </tr>
       {% endfor %}
     </tbody>
