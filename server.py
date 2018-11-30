@@ -13,11 +13,15 @@ def getResult():
         amount = request.form.get('amount', None)
         strategy = request.form.getlist("strategy")
         portion = getPortionList(strategy)
+        print('getPortionList')
         valueList = getCurrentValue(portion)
+        print("getcurrentvalue")
         nameList = getCompanyName(portion)
         amountList = getEachAmount(float(amount), portion)
         shareAmount = getShareAmount(amountList, valueList)
+        print("getShareAmount")
         historyPortfolio = getHistoryPortfolio(shareAmount)
+        print("getHistoryPortfolio")
         return render_template('result.html', valueList=valueList, nameList=nameList, amountList=amountList, historyPortfolio=historyPortfolio)
 
 if __name__ == '__main__':

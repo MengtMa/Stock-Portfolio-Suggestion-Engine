@@ -1,33 +1,50 @@
 # The current values of the overall portfolio
 import pandas as pd
+import time
 import datetime as datetime
 import pandas_datareader.data as web
 import requests
 
+result = {}
+
+
+def fetchDataFrom3rdParty(portion):
+    keys = []
+    for key in portion:
+        keys.append(key)
+    keys = ','.join(keys)
+    print(keys)
+    url = 'https://api.iextrading.com/1.0/stock/market/batch?symbols=%s&types=quote,chart&range=1m' % keys
+    data = requests.get(url).json()
+    for key in portion:
+        global result
+        result[key] = data[key]
+
+
 def getCurrentValue(portion):
+    print(portion)
+    fetchDataFrom3rdParty(portion)
     valueList = {}
     today = datetime.date.today()
     for key in portion:
-        stockData = web.DataReader(key, 'yahoo', today, today)
-        value = stockData['Adj Close'][0]
+        value = result[key]["quote"]["latestPrice"]
         valueList[key] = float(str(round(value, 2)))
     return valueList
+
 
 def getCompanyName(portion):
     nameList = {}
     for key in portion:
-        url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc?query={}&region=1&lang=en".format(key)
-        result = requests.get(url).json()
-        for x in result['ResultSet']['Result']:
-            if x['symbol'] == key:
-                nameList[key] = x['name']
+        nameList[key] = result[key]['quote']['companyName']
     return nameList
+
 
 def getEachAmount(amount, portion):
     amountList = {}
     for key, val in portion.items():
         amountList[key] = amount * val
     return amountList
+
 
 def getShareAmount(amountList, valueList):
     shareAmount = {}
@@ -36,18 +53,14 @@ def getShareAmount(amountList, valueList):
         shareAmount[key] = val / value
     return shareAmount
 
+
 def getWeekHistoryValue(stock):
     weekHistory = {}
-    today = datetime.date.today()
-    fiveDayAgo = today - datetime.timedelta(days=8)
-    stockData = web.DataReader(stock, 'yahoo', fiveDayAgo, today)
-    stockDict = dict(stockData['Close'])
-
-    for key in stockDict:
-        date = key.strftime('%Y-%m-%d')
-        weekHistory[date] = stockDict[key]
-
+    stockDict = result[stock]['chart'][-5:]
+    for item in stockDict:
+        weekHistory[item['date']] = item['close']
     return weekHistory
+
 
 def getHistoryPortfolio(shareAmount):
     historyPortfolio = {}
@@ -59,5 +72,4 @@ def getHistoryPortfolio(shareAmount):
                 historyPortfolio[key] += float(str(round(stockWeekHistory[key] * shareAmount[stock], 2)))
             else:
                 historyPortfolio[key] = float(str(round(stockWeekHistory[key] * shareAmount[stock], 2)))
-
     return historyPortfolio
