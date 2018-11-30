@@ -30,10 +30,11 @@
         Stock Portfolio Suggestion Engine
       </a>
     </nav>
-    <div class="container-fluid text-center bg-grey">
+    <div class="container h-100 d-flex justify-content-center mt-2">
       <form method="post" action="/result">
-        <p>Amount to invest ($)</p>
+        <p class="mb-0">Amount to invest ($)</p>
         <input type="number" name="amount" min="5000" required>
+        <p class="mb-0 mt-2">Please select one or two investment strageties:</p>
         <div class="form-check">
           <input class="form-check-input" type="checkbox" name="strategy" value="ethicalInvest" >
           <label class="form-check-label" for="ethicalInvest">
@@ -64,7 +65,7 @@
             Value Investing
           </label>
         </div>
-        <button type="submit" class="btn btn-primary">GET INVESTING PLANS</button>
+        <button type="submit" class="btn btn-primary mt-2">GET INVESTING PLANS</button>
       </form>
       </div>
   </body>

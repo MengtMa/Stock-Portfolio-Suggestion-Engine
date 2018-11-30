@@ -39,7 +39,7 @@ def getShareAmount(amountList, valueList):
 def getWeekHistoryValue(stock):
     weekHistory = {}
     today = datetime.date.today()
-    fiveDayAgo = today - datetime.timedelta(days=6)
+    fiveDayAgo = today - datetime.timedelta(days=8)
     stockData = web.DataReader(stock, 'yahoo', fiveDayAgo, today)
     stockDict = dict(stockData['Close'])
 
