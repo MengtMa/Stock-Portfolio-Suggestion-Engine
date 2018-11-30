@@ -1,8 +1,5 @@
 # The current values of the overall portfolio
-import pandas as pd
-import time
 import datetime as datetime
-import pandas_datareader.data as web
 import requests
 
 result = {}
@@ -13,7 +10,6 @@ def fetchDataFrom3rdParty(portion):
     for key in portion:
         keys.append(key)
     keys = ','.join(keys)
-    print(keys)
     url = 'https://api.iextrading.com/1.0/stock/market/batch?symbols=%s&types=quote,chart&range=1m' % keys
     data = requests.get(url).json()
     for key in portion:
